@@ -3,6 +3,7 @@ import { Toaster } from 'sonner';
 
 import { ThemeProvider } from './components/theme/theme-provider';
 import './index.css';
+import { NotFound } from './pages/404';
 import { routeTree } from './route-tree.gen';
 
 const router = createRouter({ routeTree });
@@ -17,7 +18,7 @@ export function App() {
   return (
     <ThemeProvider storageKey="pizzashop-theme" defaultTheme="light">
       <Toaster richColors />
-      <RouterProvider router={router} />
+      <RouterProvider router={router} defaultNotFoundComponent={NotFound} />
     </ThemeProvider>
   );
 }
