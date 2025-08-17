@@ -1,4 +1,5 @@
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
+import colors from 'tailwindcss/colors';
 
 import {
   Card,
@@ -76,10 +77,11 @@ export function RevenueChart() {
               cursor={false}
               content={<ChartTooltipContent hideLabel />}
             />
+            <CartesianGrid className="text-muted-foreground" />
             <Line
               dataKey="revenue"
               type="linear"
-              stroke="var(--color-desktop)"
+              stroke={colors.violet[500]}
               strokeWidth={2}
               dot={false}
             />
