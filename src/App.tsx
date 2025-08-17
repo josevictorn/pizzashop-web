@@ -1,6 +1,7 @@
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { Toaster } from 'sonner';
 
+import { ThemeProvider } from './components/theme/theme-provider';
 import './index.css';
 import { routeTree } from './route-tree.gen';
 
@@ -14,9 +15,9 @@ declare module '@tanstack/react-router' {
 
 export function App() {
   return (
-    <>
+    <ThemeProvider storageKey="pizzashop-theme" defaultTheme="light">
       <Toaster richColors />
       <RouterProvider router={router} />
-    </>
+    </ThemeProvider>
   );
 }
