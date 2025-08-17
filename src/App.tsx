@@ -1,11 +1,16 @@
-import { Button } from '@/components/ui/button';
+import { createRouter, RouterProvider } from '@tanstack/react-router';
 
 import './index.css';
+import { routeTree } from './route-tree.gen';
+
+const router = createRouter({ routeTree });
+
+declare module '@tanstack/react-router' {
+  interface Register {
+    router: typeof router;
+  }
+}
 
 export function App() {
-  return (
-    <div className="flex h-screen items-center justify-center">
-      <Button>Enviar</Button>
-    </div>
-  );
+  return <RouterProvider router={router} />;
 }
