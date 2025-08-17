@@ -26,9 +26,8 @@ const data = [
 ];
 
 const chartConfig = {
-  desktop: {
-    label: 'Desktop',
-    color: 'var(--chart-1)',
+  revenue: {
+    label: 'Receita',
   },
 } satisfies ChartConfig;
 
