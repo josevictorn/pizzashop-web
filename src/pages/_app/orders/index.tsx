@@ -1,4 +1,7 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { getOrders } from '@/api/get-orders';
+import { useQuery } from '@tanstack/react-query';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import z from 'zod';
 
 import { Pagination } from '@/components/pagination';
 import {
@@ -12,11 +15,28 @@ import {
 import { OrderTableFilters } from './-components/order-table-filters';
 import { OrderTableRow } from './-components/order-table-row';
 
+export const searchSchema = z.object({
+  page: z.coerce.number().default(1),
+});
+
 export const Route = createFileRoute('/_app/orders/')({
   component: Orders,
+  validateSearch: searchSchema,
 });
 
 export function Orders() {
+  const { page } = Route.useSearch();
+  const navigate = useNavigate({ from: Route.fullPath });
+
+  const { data: result } = useQuery({
+    queryKey: ['orders', page],
+    queryFn: () => getOrders({ pageIndex: page }),
+  });
+
+  function handlePaginate(pageIndex: number) {
+    navigate({ search: (prev) => ({ ...prev, page: pageIndex }) });
+  }
+
   return (
     <>
       <div className="flex flex-col gap-4">
@@ -39,13 +59,21 @@ export function Orders() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {Array.from({ length: 10 }).map((_, i) => {
-                  return <OrderTableRow key={i} />;
-                })}
+                {result &&
+                  result.orders.map((order) => {
+                    return <OrderTableRow key={order.orderId} order={order} />;
+                  })}
               </TableBody>
             </Table>
           </div>
-          <Pagination pageIndex={0} totalCount={105} perPage={10} />
+          {result && (
+            <Pagination
+              onPageChange={handlePaginate}
+              pageIndex={result.meta.pageIndex}
+              totalCount={result.meta.totalCount}
+              perPage={result.meta.perPage}
+            />
+          )}
         </div>
       </div>
     </>
