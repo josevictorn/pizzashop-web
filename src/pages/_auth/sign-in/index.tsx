@@ -1,4 +1,6 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { signIn } from '@/api/sign-in';
+import { useMutation } from '@tanstack/react-query';
+import { createFileRoute, Link, useSearch } from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import z from 'zod';
@@ -9,6 +11,9 @@ import { Label } from '@/components/ui/label';
 
 export const Route = createFileRoute('/_auth/sign-in/')({
   component: SignIn,
+  validateSearch: z.object({
+    email: z.email().optional(),
+  }),
 });
 
 const signInForm = z.object({
@@ -18,15 +23,25 @@ const signInForm = z.object({
 type SignInForm = z.infer<typeof signInForm>;
 
 function SignIn() {
+  const { email } = Route.useSearch();
+
   const {
     register,
     handleSubmit,
     formState: { isSubmitting },
-  } = useForm<SignInForm>();
+  } = useForm<SignInForm>({
+    defaultValues: {
+      email: email || '',
+    },
+  });
+
+  const { mutateAsync: authenticate } = useMutation({
+    mutationFn: signIn,
+  });
 
   async function handleSignIn(data: SignInForm) {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await authenticate({ email: data.email });
 
       toast.success('Enviamos um link de autenticação para seu e-mail.', {
         action: {
